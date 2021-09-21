@@ -43,10 +43,16 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'core'
+    'core',
+    'crispy_forms'
 ]
 
 SITE_ID = 1
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+LOGIN_REDIRECT_URL = '/'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
