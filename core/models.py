@@ -41,6 +41,7 @@ class Item(models.Model):
             'slug' : self.slug
         })
 
+
 class OrderItem(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL , on_delete=models.CASCADE, blank=True , null=True)
     ordered = models.BooleanField(default=False)
@@ -49,6 +50,20 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} of {self.item.title}"
+
+    def get_total_item_price(self):
+        return self.quantity * self.item.price
+
+    def get_total_discount_item_price(self):
+        return self.quantity * self.item.discount_price
+    
+    def get_total_saved_price(self):
+        return self.get_total_item_price() - self.get_total_discount_item_price()
+    
+    def get_finale_price(self):
+        if self.item.discount_price:
+            return self.get_total_discount_item_price()
+        return self.get_total_item_price()
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL , on_delete=models.CASCADE)
@@ -60,3 +75,8 @@ class Order(models.Model):
     def __str__(self):
         return self.user.username
 
+    def get_total(self):
+        total =0
+        for item in self.items.all():
+            total += item.get_finale_price()
+        return total
