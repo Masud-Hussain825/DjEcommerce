@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'core',
-    'crispy_forms'
+    'crispy_forms',
+    'django_countries'
 ]
 
 SITE_ID = 1

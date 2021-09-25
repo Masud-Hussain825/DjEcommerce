@@ -1,3 +1,5 @@
+from django.http import request
+from core.forms import CheckoutForm
 from typing import List
 from django.shortcuts import get_object_or_404, redirect, render
 from .models import Item , Order , OrderItem
@@ -20,8 +22,25 @@ class ItemDetails(DetailView):
     model = Item
     template_name = 'product-page.html'
 
-def checkout(request):
-    return render(request , 'checkout-page.html' )
+
+class Checkout(View):
+    def get(self, *args , **kwargs):
+        form = CheckoutForm()
+        context = {
+            'form' : form
+        }
+        return render(self.request , "checkout-page.html" , context)
+
+    def post(self, *args , **kwargs):
+        form = CheckoutForm(self.request.POST)
+        print(self.request.POST)
+        if form.is_valid():
+            print(form.cleanded_data)
+            print('The form is valid')
+            messages.success(self.request , 'Successfully Checkedout')
+            return redirect('core:Checkout')
+        messages.warning(self.request, 'Failed Checkout')
+        return redirect('core:Checkout')
 
 class orderSummaryView(View , LoginRequiredMixin):
     def get(self , *args , **kwargs):
@@ -111,3 +130,4 @@ def remove_from_cart(request , slug):
     else:
         messages.error(request , "you don't have any active order")
         return redirect("core:ItemDetails" , slug=slug)
+
